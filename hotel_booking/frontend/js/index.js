@@ -35,6 +35,7 @@ if(roomTypeForm){
 async function handleLogin(event) {
     event.preventDefault()
     let loginFormData = new FormData(loginForm)
+    loginFormData.append('is_admin','false')
     let loginObjectData = Object.fromEntries(loginFormData)
     let bodyStr = JSON.stringify(loginObjectData)
     console.log(bodyStr)
@@ -43,7 +44,7 @@ async function handleLogin(event) {
         headers: {
             "Content-Type": "application/json",
         },
-        body: bodyStr
+        body: bodyStr 
     }
     fetch(baseurl + 'auth/signin', options)
     .then(response => {
@@ -54,7 +55,7 @@ async function handleLogin(event) {
             // Perform the redirection to the home page
             const decoded = parseJwt(authData.access_token)
             console.log(decoded)
-            if(decoded.is_admin){
+            if(decoded.isAdmin){
                 localStorage.setItem('access_token', authData.access_token)
                 window.location.href = './admin.html';
             } else {
@@ -92,9 +93,9 @@ function getVIPRooms() {
     .then(response =>{
         response.forEach(element => {
             viprooms.innerHTML += 
-                `<div class="card-body ">
-                    <ul class="list-group ">
-                        <li class="list-group-item col-sm-4">
+                `<div class="card-body  ">
+                    <ul class="list-group  ">
+                        <li class="list-group-item ">
                             <img src="${element.image}" alt="Room Image" class="img-fluid ">
                             <div>
                             <p class="card-text"><strong>Description:</strong> ${element.description}</p>
@@ -233,7 +234,6 @@ function handelRoomUpdate(id) {
     formData.append('classId', document.getElementById('roomClass').value)
     formData.append('title', document.getElementById('title').value)
     formData.append('avaliable', false)
-    console.log(id)
 
     const options = {
         method: "PUT",
@@ -288,7 +288,7 @@ function getMidddleRoom() {
                 `<div class="card-body">
                     <ul class="list-group">
                         <li class="list-group-item">
-                            <img src="${element.image}" alt="Room Image" class="w-25">
+                            <img src="${element.image}" alt="Room Image" class="img-fluid">
                             <div>
                             <p class="card-text"><strong>Description:</strong> ${element.description}</p>
                             <p class="card-text"><strong>Price:</strong> ${element.price}</p>
@@ -389,9 +389,9 @@ function getEconomicRoom() {
     .then(response =>{
             response.forEach(element => {
             middleroom.innerHTML += 
-                `<div class="card-body">
-                    <ul class="list-group row">
-                        <li class="list-group-item col-sm-4">
+                `<div class="card-body ">
+                    <ul class="list-group ">
+                        <li class="list-group-item  ">
                             <img src="${element.image}" alt="Room Image" class="img-fluid">
                             <div>
                             <p class="card-text"><strong>Description:</strong> ${element.description}</p>
