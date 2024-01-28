@@ -1,0 +1,18 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+.container {
+    margin: 20px;
+}
+
+.form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Add any additional custom styling as needed */

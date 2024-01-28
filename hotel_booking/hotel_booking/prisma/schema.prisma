@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id() @default(autoincrement())
+  email String @unique
+  password String 
+  is_admin Boolean @default(false)
+
+  created DateTime @default(now())
+  update DateTime @updatedAt
+}
+
+
+model Room {
+  id Int @id() @default(autoincrement())
+  title String
+  image String
+  avaliable Boolean @default(false)
+  price Int
+  description String 
+  classId Int
+
+  customer CustomerRequest[]
+}
+
+
+
+
+model CustomerRequest {
+  id Int @id @default(autoincrement())
+  roomid Int 
+  room Room @relation(fields: [roomid], references: [id])
+  approval Boolean
+  form DateTime 
+  to DateTime
+}

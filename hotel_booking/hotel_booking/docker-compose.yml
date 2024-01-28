@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  dev-db:
+    image: postgres:13
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: superman
+      POSTGRES_PASSWORD: 106inSuperman
+      POSTGRES_DB: hotel_booking
+    networks:
+      - hotel_booking
+  test-db:
+    image: postgres:13
+    ports:
+      - 5435:5432
+    environment:
+      POSTGRES_USER: superman
+      POSTGRES_PASSWORD: 106inSuperman
+      POSTGRES_DB: hotel_booking
+    networks:
+      - hotel_booking
+networks:
+  hotel_booking:
