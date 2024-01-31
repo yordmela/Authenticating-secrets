@@ -2,9 +2,8 @@
 
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
-import { AuthDto } from "./dto";``
+import { AuthDto } from "./dto";
 import * as argon from 'argon2';
-import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 
@@ -35,11 +34,7 @@ export class AuthService {
             return user
 
         } catch (error) {
-            if (error instanceof PrismaClientKnownRequestError){
-                if (error.code === 'P2002') {
-                    throw new ForbiddenException('taken Credientals');
-                }
-            }
+            
             throw error;
         }
         
@@ -56,16 +51,18 @@ export class AuthService {
         const pwMatch = await argon.verify(user.password, authObject.password)
 
         if (!pwMatch) throw new ForbiddenException('Incorrect password')
-        return this.signToken(user.id, user.email);
+        return this.signToken(user.id, user.email, user.is_admin);
     }
 
     async signToken(
         userId: number,
         email: string,
+        isAdmin: boolean,
       ): Promise<{ access_token: string }> {
         const payload = {
           sub: userId,
           email,
+          isAdmin,
         };
         const secret = this.config.get('JWT_SECRET');
     
