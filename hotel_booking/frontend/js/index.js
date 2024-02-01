@@ -495,3 +495,135 @@ function parseJwt (token) {
 
     return JSON.parse(jsonPayload);
 }
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const signupForm = document.getElementById('signupForm');
+
+    if (signupForm) {
+        signupForm.addEventListener('submit', handleSignup);
+    }
+});
+
+async function handleSignup(event) {
+    event.preventDefault();
+    const formData = new FormData();
+
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+    const role = event.target.role.value;
+    console.log(email, password, role)
+
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('is_admin', role);
+    entries =  Object.fromEntries(formData)
+    bodystr = JSON.stringify(entries)
+    const options = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: bodystr
+    }
+
+    console.log('Signup form submitted with:', bodystr);
+
+    const response = await fetch(baseurl+'auth/signup', options)
+        .then(res => {
+            return res.json()
+        })
+        .then(res => {
+            window.location.href = './login.html'
+            console.log(res)
+        })
+        .catch(err => {
+            alert(err.message)
+        })
+        console.log(response)
+        
+        
+
+}
+
+
+// async function handleSignup(event) {
+//     event.preventDefault();
+//     const formData = new FormData();
+
+//     const email = document.getElementById('email').value;
+//     const password = document.getElementById('password').value;
+//     const role = document.getElementById('role').value;
+
+//     formData.append('email', email)
+//     formData.append('password', password)
+//     formData.append('is_admin', role)
+//     console.log('Signup form submitted with:', JSON.stringify(formData));
+
+//     try {
+//         const response = await fetch('http://localhost:9100/auth/signup', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body:{
+//                 email:email,
+//                 password:password,
+//                 is:
+//             },
+//         })
+//         .then(res => {
+//             return res.json()
+//         })
+//         .then( res => {
+//             loginUser(email, password)
+//         })
+//         .catch(err => {
+//             alert('error has occured', err)
+//         });
+        
+//     } catch (error) {
+//         console.error('An unexpected error occurred:', error);
+//         alert('An unexpected error occurred. Please try again.');
+//     }
+// }
+
+
+async function loginUser(email, password) {
+    formData = new FormData();
+    formData.append('email', email)
+    formData.append('password',password)
+    const options = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body:formData
+    }
+    fetch(baseurl + 'auth/signin', options)
+    .then(response => {
+        return response.json()
+    })
+    .then(authData => {
+        if (authData && authData.access_token) {
+            // Perform the redirection to the home page
+            const decoded = parseJwt(authData.access_token)
+            console.log(decoded)
+            if(decoded.is_admin){
+                localStorage.setItem('access_token', authData.access_token)
+                window.location.href = './admin.html';
+            } else {
+                window.location.href = './home.html'
+            }
+            
+            //window.location.href = './admin.html'; // Change './admin.html' to the actual path of your home page
+        } else {
+            const errorMessage = authData.message || 'Incorrect username or password';
+            document.getElementById('error-message').innerText = errorMessage;
+            }
+    })
+    .catch(err=> {
+        console.log('err', err)
+    })
+}
