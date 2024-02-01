@@ -17,13 +17,20 @@ export class AuthService {
     async signup (authObject: AuthDto) {
         try{
             const hashed_pass = await argon.hash(authObject.password);
-            const is_admin = authObject.is_admin
+            let newvar;
+            let is_admin = authObject.is_admin
+            if (is_admin=='true'){
+              newvar=true
+            }else{
+              newvar=false
+            }
+
 
             const user = await this.prisma.user.create({
                 data: {
                     email: authObject.email,
                     password: hashed_pass,
-                    is_admin: Boolean(is_admin),
+                    is_admin: newvar,
                 },
 
                 select: {
